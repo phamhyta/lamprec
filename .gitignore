@@ -1,0 +1,13 @@
+# Downloaded datasets (large; fetched per module docstrings, never committed)
+data/cache/
+
+# Raw per-seed experiment outputs
+results/**/seed_*.json
+
+# Local venv / build
+.venv/
+*.egg-info/
+build/
+dist/
+__pycache__/
+.pytest_cache/
