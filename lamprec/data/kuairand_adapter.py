@@ -24,12 +24,36 @@ from lamprec.data.event import Stream
 CACHE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))), "data", "cache", "kuairand")
 
+# Parsed + time-sorted CSVs, keyed by absolute path. Pure performance cache (the
+# 1.2M-row log would otherwise be re-parsed per seed); no protocol change.
+_DF_CACHE: dict = {}
+
+
+def _load_df(path: str):
+    import pandas as pd
+
+    key = os.path.abspath(path)
+    if key not in _DF_CACHE:
+        df = pd.read_csv(path)
+        if "time_ms" in df:
+            df = df.sort_values("time_ms")
+        _DF_CACHE[key] = df.reset_index(drop=True)
+    return _DF_CACHE[key]
+
 
 def load_kuairand(filename: str = "log_random.csv", calib_frac: float = 0.1,
                   delay_median: float = 6.0, delay_sigma: float = 0.8,
                   smooth: int = 200, seed: int = 0, max_rows: int = 40000,
-                  path: str | None = None) -> Stream:
-    """Load a KuaiRand random-exposure log into a Stream. Raises if absent."""
+                  reward: str = "click", path: str | None = None) -> Stream:
+    """Load a KuaiRand random-exposure log into a Stream. Raises if absent.
+
+    ``reward`` selects the observed reward:
+
+    * ``"click"`` (default): binary ``is_click`` -- the original column.
+    * ``"watch_ratio"``: graded engagement ``clip(play_time_ms/duration_ms, 0, 1)``
+      -- the paper's graded-relevance (DCG) estimand on real data
+      ("KuaiRand-Engage"), with a frozen per-video mean-watch-ratio proxy.
+    """
     withheld("lamprec.data.kuairand_adapter.load_kuairand")
 
 

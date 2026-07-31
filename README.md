@@ -40,20 +40,25 @@ A logged round flows through four components (`lamprec/core/monitor.py`):
 3. **Confidence sequence** (`core/confseq.py`) — each completed pseudo-outcome
    is appended once, in maturation order, to a betting confidence sequence that
    is valid at every query time.
-4. **Forgetting + alarm** (`core/drift.py`, `core/confseq.py`) — geometric
-   recency weights define the monitored window; the alarm fires only when the
-   whole interval sits below the quality floor.
+4. **Forgetting + alarm** (`core/drift.py`, `core/edetector.py`) — geometric
+   recency weights define the monitored window; degradation alarms come from a
+   changepoint e-detector (label + zero-delay proxy channels) with a
+   time-uniform false-alarm guarantee, alongside the CS-crossing rule.
+
+Estimated nuisances have their own modules: the maturation law
+(`core/maturation.py`) and the examination curve with its anytime-valid
+specification gate (`core/estimator.py`).
 
 ## Package map
 
 | Module | Role |
 |--------|------|
 | `lamprec.data` | Common `Stream` schema and the OBP / KuaiRand adapters |
-| `lamprec.core` | The online monitor: estimator, confidence sequence, forgetting theory, examination factorization |
+| `lamprec.core` | The online monitor: estimator, confidence sequence, forgetting theory, examination factorization, changepoint e-detector, maturation-law estimation |
 | `lamprec.sim` | Synthetic stream generator with exact ground-truth quality |
 | `lamprec.baselines` | Delay-aware and label-free baselines compared in the paper |
 | `lamprec.metrics` | Tracking error, time-uniform coverage, width, alarm metrics |
-| `experiments/` | Per-question runners, equal-labels protocol, report builder |
+| `experiments/` | Per-question runners, equal-labels protocol, pre-registered tuning split, report builder |
 | `tests/` | Public portion of the test suite (withheld claims are skipped) |
 
 ## Input / output contract

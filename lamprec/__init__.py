@@ -8,4 +8,4 @@ that schema.
 from lamprec.data.event import Stream
 
 __all__ = ["Stream"]
-__version__ = "0.1.0"
+__version__ = "0.2.0"

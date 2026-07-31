@@ -8,8 +8,10 @@ the estimator MIS-SPECIFIED nuisances and measure graceful (or not) degradation:
     propensities. LAMP-Rec degrades gracefully and stays at the proxy-free
     AV-DR level.
 (b) Wrong examination model: the estimator assumes a cascade with the WRONG
-    decay. The 1/e debias then over-corrects; the overlap floor τ_min (Thm 4a)
-    bounds the damage.
+    decay. The 1/e debias then over-corrects; the defense rows show the
+    estimated examination curve (``estimate_exam``) and the anytime-valid gate
+    (``exam_gate``) neutralizing the misspecification, with the overlap floor
+    τ_min (Thm 4a) as the rank-free fallback.
 
     uv run python experiments/rq7_misspecification.py
 """
@@ -24,7 +26,7 @@ def _base(seed):
     withheld("experiments.rq7_misspecification._base")
 
 
-def _sr(s, tau=0.05):
+def _sr(s, tau=0.05, **flags):
     withheld("experiments.rq7_misspecification._sr")
 
 

@@ -1,6 +1,6 @@
 [project]
 name = "lamprec"
-version = "0.1.0"
+version = "0.2.0"
 description = "LAMP-Rec: label-free anytime-valid performance monitor for streaming recommenders (public interface skeleton)"
 requires-python = ">=3.11"
 dependencies = [

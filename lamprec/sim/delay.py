@@ -52,7 +52,24 @@ def informative_delay(n: int, quality: np.ndarray, base_mean: float,
     High-relevance rounds mature fast; low-relevance rounds mature slowly, so
     at any time the matured set over-represents high relevance, biasing the
     naive estimate and breaking the naive martingale's coverage. Returns
-    ``(delay, mat_prob)`` where ``mat_prob`` is the per-round maturation
-    propensity for the IPCW (ρ) correction.
+    ``(delay, delay_means)`` -- the per-round exponential-delay mean, i.e. the
+    oracle delay LAW, from which the maturation propensity is evaluated at the
+    ELAPSED LAG ``π^mat_{t,s} = P(d_s ≤ t−s)``, matching the paper's definition
+    (a fixed-window propensity is horizon-inconsistent).
     """
     withheld("lamprec.sim.delay.informative_delay")
+
+
+def mat_prob_at_lag(delay_means: np.ndarray, lag) -> np.ndarray:
+    """``P(d_s ≤ lag)`` under the exponential delay law (elementwise)."""
+    return 1.0 - np.exp(-np.asarray(lag, dtype=float) / delay_means)
+
+
+def mat_prob_fixed_lag(delay_means: np.ndarray, lam: float) -> np.ndarray:
+    """Horizon-consistent per-round propensity for an EMA estimator.
+
+    Evaluates the delay CDF at the estimator's own effective horizon
+    ``L = ⌈1/(1−λ)⌉`` -- the dominant lag of the forgetting weights -- so the
+    IPCW weight is right where the EMA mass sits.
+    """
+    withheld("lamprec.sim.delay.mat_prob_fixed_lag")

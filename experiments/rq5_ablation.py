@@ -28,6 +28,11 @@ def ablation_table():
     withheld("experiments.rq5_ablation.ablation_table")
 
 
+def width_legs():
+    """Per-leg CS-width decomposition of the union bound (Fig. width panel)."""
+    withheld("experiments.rq5_ablation.width_legs")
+
+
 def lambda_sweep():
     withheld("experiments.rq5_ablation.lambda_sweep")
 

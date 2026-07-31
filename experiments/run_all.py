@@ -16,6 +16,7 @@ RUNNERS = [
     ("RQ5 ablation", "experiments.rq5_ablation"),
     ("RQ6 robustness", "experiments.rq6_robustness"),
     ("RQ7 misspecification", "experiments.rq7_misspecification"),
+    ("RQ8 OPE-CS ladder", "experiments.rq8_opecs"),
 ]
 
 

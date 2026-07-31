@@ -95,7 +95,9 @@ def simulate_informative_delay(cfg: SimConfig, base_mean: float = 8.0,
                                ) -> tuple[Stream, np.ndarray]:
     """Stream whose delay correlates with the reward (Assumption-D violation).
 
-    Returns ``(stream, mat_prob)``; pass ``mat_prob`` to the monitor's config to
-    apply the IPCW correction that restores coverage.
+    Returns ``(stream, delay_means)`` -- the oracle per-round delay law. Pass it
+    to the monitor as ``mat_mean`` (elapsed-lag IPCW) to apply the correction
+    that restores coverage; helpers ``mat_prob_at_lag`` / ``mat_prob_fixed_lag``
+    evaluate the CDF for consumers that need a per-round scalar propensity.
     """
     withheld("lamprec.sim.stream.simulate_informative_delay")

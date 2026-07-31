@@ -20,7 +20,15 @@ MAIN_PROFILES = {
                       delay_kwargs={"mean": 6.0}),
     "KuaiRand":  dict(proxy_rho=0.82, delay_model="lognormal",
                       delay_kwargs={"median": 6.0, "sigma": 0.8}),
+    # Graded watch-ratio engagement on the same KuaiRand random log (the paper's
+    # DCG estimand on real data); synthetic stand-in until the log is cached.
+    "KuaiRand-Engage": dict(proxy_rho=0.65, delay_model="lognormal",
+                            delay_kwargs={"median": 6.0, "sigma": 0.8}),
 }
+
+# A-priori row budget for KuaiRand-Engage, fixed BEFORE any accuracy number was
+# seen (largest candidate whose full 10-seed RQ1 column fits the time budget).
+ENGAGE_MAX_ROWS = 200000
 
 
 def _real_stream(name: str, seed: int):
@@ -34,6 +42,11 @@ def _real_stream(name: str, seed: int):
             from lamprec.data import kuairand_adapter
             if kuairand_adapter.available():
                 return kuairand_adapter.load_kuairand(seed=seed)
+        if name == "KuaiRand-Engage":
+            from lamprec.data import kuairand_adapter
+            if kuairand_adapter.available():
+                return kuairand_adapter.load_kuairand(
+                    seed=seed, reward="watch_ratio", max_rows=ENGAGE_MAX_ROWS)
     except Exception as exc:                              # noqa: BLE001
         print(f"  [warn] {name} adapter failed ({exc}); using synthetic profile")
     return None

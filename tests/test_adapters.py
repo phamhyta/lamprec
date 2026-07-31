@@ -30,6 +30,11 @@ def test_kuairand_adapter_parses(tmp_path):
 
 
 @pytest.mark.skip(reason=NOTICE)
+def test_kuairand_watch_ratio_parses(tmp_path):
+    """reward='watch_ratio': graded r_obs in [0,1], mean-fallback proxy, rho meta."""
+
+
+@pytest.mark.skip(reason=NOTICE)
 def test_adapters_raise_when_absent(tmp_path):
     """Missing cache files raise a clear FileNotFoundError with download steps."""
 

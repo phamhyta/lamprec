@@ -46,6 +46,53 @@ def recalibrate_proxy(stream: Stream, lam: float, tau_min: float, *,
     withheld("lamprec.core.estimator.recalibrate_proxy")
 
 
+def estimate_examination(stream: Stream, lam_e: float = 0.999,
+                         min_count: float = 20.0,
+                         decay_clip: tuple[float, float] = (0.4, 0.99)
+                         ) -> np.ndarray:
+    """Online estimate of the examination curve from the matured labels.
+
+    Positions are randomized independently of relevance, so the position-wise
+    means of matured labels point-identify the TRUE examination curve
+    regardless of the assumed decay. Per-position EW means are updated in
+    maturation order (predictable), pooled by a one-parameter cascade fit; the
+    assumed ``stream.e`` is kept as the cold-start fallback until every used
+    position has enough effective count. A plug-in nuisance, reported with the
+    same estimated-nuisance caveat as the maturation model.
+    """
+    withheld("lamprec.core.estimator.estimate_examination")
+
+
+def gated_examination(stream: Stream, alpha_spec: float = 0.05) -> np.ndarray:
+    """Anytime-valid specification gate on the assumed examination model.
+
+    A sequential test-by-betting of label-value independence that exploits the
+    logged position randomization: under H0 (assumed ``e`` correct) the betting
+    increment is conditionally mean-zero regardless of drift, and two one-sided
+    wealths give a time-uniform level-``alpha_spec`` test by Ville. On
+    rejection, rounds maturing after the stopping time switch to the estimated
+    curve of :func:`estimate_examination`; if the test never rejects, the
+    assumed model is used throughout (its correct-model optimality is kept).
+    """
+    withheld("lamprec.core.estimator.gated_examination")
+
+
+def power_tune_proxy(stream: Stream, lam: float, tau_min: float, *,
+                     importance: bool = True, examination: bool = True
+                     ) -> tuple[np.ndarray, np.ndarray]:
+    """Slope-only, centered power-tuning of the proxy (PPI++ coefficient).
+
+    Replaces the affine recalibration's ``(a_t, b_t)`` with
+    ``g'_s = β_s (g_s − m_s)`` where ``m_s`` is a predictable EW proxy mean and
+    ``β_s = clip(Cov/Var, [0,1])`` the variance-optimal control-variate
+    coefficient from labels matured before ``s`` (no intercept). Unbiasedness
+    is untouched for any ``(β, m)`` path; when the proxy carries no signal
+    ``β→0`` kills BOTH terms identically, so the estimator reduces to the
+    proxy-free matured EMA.
+    """
+    withheld("lamprec.core.estimator.power_tune_proxy")
+
+
 def shrunk_rectifier(stream: Stream, cfg: "LampRecConfig") -> np.ndarray:
     """Rectifier with variance-aware (James-Stein) examination-debiasing shrinkage.
 
@@ -93,12 +140,29 @@ class LampRecConfig:
     lam: float = 0.97               # forgetting factor λ ∈ (0,1)
     tau_min: float = 0.05           # overlap floor for IPS clipping (Thm 4a)
     mat_prob: np.ndarray | None = None  # per-round maturation propensity π^mat (IPCW); None→1
+    mat_mean: np.ndarray | None = None  # per-round MEAN of an exponential delay law
+                                    # (oracle or estimated). When set, the IPCW
+                                    # weight is evaluated at the ELAPSED LAG
+                                    # π^mat_{t,s} = 1−exp(−(t−s)/mean_s) -- the
+                                    # paper's definition. Takes precedence over
+                                    # mat_prob.
     importance: bool = True         # use policy importance weight (ablation off)
     examination: bool = True        # use 1/e position debias (ablation off)
-    recalibrate: bool = False       # online affine proxy recalibration (variance ↓
-                                    # under drift; unbiasedness preserved)
+    recalibrate: bool = False       # online affine proxy recalibration. Superseded
+                                    # by power_tune; kept for the ablation
+                                    # comparison.
+    power_tune: bool = False        # slope-only centered power-tuning (PPI++):
+                                    # β_t (g−m_t) with predictable (β, m); reduces
+                                    # to the proxy-free matured EMA when β→0. The
+                                    # point-estimate default.
     shrink_debias: bool = False     # variance-aware James-Stein shrinkage of the
                                     # examination debias
+    estimate_exam: bool = False     # estimate the examination curve online from
+                                    # the matured labels' position-wise means
+                                    # (randomized ranks identify it)
+    exam_gate: bool = False         # anytime-valid spec test of the assumed
+                                    # curve; switches to the estimated curve only
+                                    # on rejection
     adaptive_lam: bool = False      # EXPERIMENTAL online plug-in λ̂ (a well-chosen
                                     # fixed λ remains the default)
     weight_floor: float = 1e-12     # numerical floor on weight denominators

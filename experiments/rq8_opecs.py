@@ -18,13 +18,14 @@ from lamprec._release import withheld
 
 LAM, TAU = 0.99, 0.05
 STRENGTHS = [0.0, 2.0, 4.0, 6.0, 8.0, 10.0]   # informative-delay severity sweep
+K_GRID = [1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0]   # width-inflation frontier grid
 
 
 def _make(seed, strength):
     withheld("experiments.rq8_opecs._make")
 
 
-def _cs(method, stream, mat_prob):
+def _cs(method, stream, delay_means):
     withheld("experiments.rq8_opecs._cs")
 
 

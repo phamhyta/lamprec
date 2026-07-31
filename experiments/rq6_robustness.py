@@ -19,7 +19,7 @@ def _drift_budget(stream):
     withheld("experiments.rq6_robustness._drift_budget")
 
 
-def _coverage_run(make_stream, mat_prob_from=None):
+def _coverage_run(make_stream, mat_mean_from=None):
     withheld("experiments.rq6_robustness._coverage_run")
 
 
